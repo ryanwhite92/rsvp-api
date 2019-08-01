@@ -1,12 +1,12 @@
 .hero {
-  background: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)), url(./assets/floral.jpg);
+  background: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)), url(./assets/floral_c.jpg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   color: #fff;
-  font-family: 'Nothing You Could Do', serif;
-  font-size: 1.4rem;
-  font-weight: 400;
+  font-family: 'Herr Von Muellerhoff', 'Crimson Pro', serif;
+  font-size: 1.2rem;
+  letter-spacing: 6px;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -20,25 +20,43 @@
   flex-flow: column wrap;
   justify-content: center;
   align-items: center;
+  margin-top: -3em;
 }
 .hero__title,
 .hero__subtitle,
-.hero__p {
+.hero__p,
+.hero__small {
+  font-weight: 400;
   margin: 0;
 }
 .hero__title {
-  font-size: 2.8em;
+  font-size: 2.9em;
 }
 .hero__subtitle {
-  font-size: 2em;
+  font-size: 2.1em;
   margin-bottom: 2.75rem;
 }
 .hero__small {
   position: absolute;
   bottom: 5%;
 }
-@media all and (min-width: 768px) {
+.hero__p,
+.hero__small {
+  font-family: 'Crimson Pro', sans-serif;
+  font-size: .8em;
+}
+@media all and (min-width: 576px) {
   .hero {
-    font-size: 2.5rem;
+    font-size: 1.6rem;
+  }
+}
+@media all and (min-width: 813px) {
+  .hero {
+    font-size: 2.2rem;
+  }
+}
+@media all and (min-width: 1099px) {
+  .hero {
+    font-size: 2.6em;
   }
 }
