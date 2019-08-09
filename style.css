@@ -1,3 +1,9 @@
+* {
+  box-sizing: border-box;
+}
+main {
+  min-height: 100vh;
+}
 .hero {
   background: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.3)), url(./assets/floral_c.jpg);
   background-position: center;
@@ -11,39 +17,44 @@
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  overflow-y: auto;
   height: 100vh;
   width: 100vw;
   text-align: center;
 }
 .hero__text-wrapper {
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: -3em;
+  flex: 0 0 100%;
+  margin: 3.25rem 0;
 }
 .hero__title,
 .hero__subtitle,
-.hero__p,
-.hero__small {
+.hero__date,
+.hero__location,
+.hero__rsvp {
   font-weight: 400;
   margin: 0;
+  padding: 0 1rem;
 }
 .hero__title {
   font-size: 2.9em;
+  margin-bottom: 2.25rem;
 }
 .hero__subtitle {
+  font-size: 2.9em;
+}
+.hero__date {
   font-size: 2.1em;
   margin-bottom: 2.75rem;
 }
-.hero__small {
-  position: absolute;
-  bottom: 5%;
-}
-.hero__p,
-.hero__small {
+.hero__location,
+.hero__rsvp {
   font-family: 'Crimson Pro', sans-serif;
   font-size: .8em;
+}
+.hero__rsvp {
+  align-self: flex-end;
+  margin-bottom: 4.75rem;
 }
 @media all and (min-width: 576px) {
   .hero {
