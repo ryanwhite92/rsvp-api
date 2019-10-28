@@ -1,6 +1,12 @@
 {
-  "extends": ["eslint:recommended", "prettier"],
-  "plugins": [],
+  "extends": [
+    "eslint:recommended",
+    "prettier",
+    "prettier/standard",
+    "plugin:node/recommended",
+    "plugin:jest/recommended"
+  ],
+  "plugins": ["promise", "import"],
   "parserOptions": {
     "ecmaVersion": 2016,
     "sourceType": "module"
@@ -9,5 +15,9 @@
     "es6": true,
     "browser": true,
     "node": true
+  },
+  "rules": {
+    "promise/catch-or-return": "error",
+    "import/no-unresolved": 2
   }
 }
