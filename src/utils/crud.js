@@ -1,3 +1,5 @@
+import { connectableObservableDescriptor } from '../../../../Library/Caches/typescript/3.6/node_modules/rxjs/internal/observable/ConnectableObservable';
+
 export const getOne = model => async (req, res) => {
   const { id } = req.params;
 
@@ -71,9 +73,30 @@ export const updateOne = model => async (req, res) => {
   }
 };
 
+export const removeOne = model => async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const removedDoc = await model
+      .findByIdAndDelete(id)
+      .lean()
+      .exec();
+
+    if (!removedDoc) {
+      return res.status(400).end();
+    }
+
+    return res.status(200).json({ data: removedDoc });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).end();
+  }
+};
+
 export const crudControllers = model => ({
   getOne: getOne(model),
   getMany: getMany(model),
   createOne: createOne(model),
-  updateOne: updateOne(model)
+  updateOne: updateOne(model),
+  removeOne: removeOne(model)
 });
