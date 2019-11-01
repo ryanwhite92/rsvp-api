@@ -1,8 +1,17 @@
 import { Router } from 'express';
-import { createGuest } from './guest.controller';
+import controllers from './guest.controller';
 
 const router = Router();
 
-router.route('/').post(createGuest);
+router
+  .route('/')
+  .get(controllers.getMany)
+  .post(controllers.createOne);
+
+router
+  .route('/:id')
+  .get(controllers.getOne)
+  .put(controllers.updateOne)
+  .delete(controllers.removeOne);
 
 export default router;
