@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import config from './config';
 import { connect } from './utils/db';
+import GuestRouter from './resources/guest/guest.router';
 
 const app = express();
 
@@ -12,6 +13,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+app.use('/api/guest', GuestRouter);
 
 app.get('/', (req, res) => res.send('hello world'));
 
