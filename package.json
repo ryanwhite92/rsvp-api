@@ -1,5 +1,5 @@
 {
-  "name": "wedding-site",
+  "name": "wedding-api",
   "version": "0.0.1",
   "description": "Track wedding logistics",
   "main": "server.js",
@@ -19,9 +19,11 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "jest": "^24.9.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.7",
     "morgan": "^1.9.1"
   },
