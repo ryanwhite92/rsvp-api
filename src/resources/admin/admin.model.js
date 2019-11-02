@@ -35,3 +35,5 @@ adminSchema.methods.checkPassword = function(password) {
   const passwordHash = this.password;
   return bcrypt.compare(password, passwordHash);
 };
+
+export const Admin = mongoose.model('admin', adminSchema);
