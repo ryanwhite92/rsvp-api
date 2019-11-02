@@ -17,7 +17,7 @@ const adminSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.pre('save', function(next) {
+adminSchema.pre('save', function(next) {
   if (!this.isModified('password')) {
     return next();
   }
@@ -30,3 +30,8 @@ userSchema.pre('save', function(next) {
   });
   next();
 });
+
+adminSchema.methods.checkPassword = function(password) {
+  const passwordHash = this.password;
+  return bcrypt.compare(password, passwordHash);
+};
