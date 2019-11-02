@@ -1,5 +1,3 @@
-import { connectableObservableDescriptor } from '../../../../Library/Caches/typescript/3.6/node_modules/rxjs/internal/observable/ConnectableObservable';
-
 export const getOne = model => async (req, res) => {
   const { id } = req.params;
 
