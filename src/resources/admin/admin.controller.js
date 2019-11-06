@@ -22,7 +22,7 @@ export const signin = async (req, res) => {
       return res.status(401).send({ message: invalidMessage });
     }
 
-    const token = auth.newToken(admin);
+    const token = newToken(admin);
     return res.status(201).send({ token });
   } catch (e) {
     console.error(e);
