@@ -27,8 +27,8 @@ adminSchema.pre('save', function(next) {
       return next(err);
     }
     this.password = hash;
+    next();
   });
-  next();
 });
 
 adminSchema.methods.checkPassword = function(password) {
