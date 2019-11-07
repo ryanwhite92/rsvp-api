@@ -1,5 +1,5 @@
 import { newToken } from '../../utils/auth';
-import { Admin } from '../resources/admin/admin.model';
+import { Admin } from './admin.model';
 
 export const signin = async (req, res) => {
   const { email, password } = req.body;
