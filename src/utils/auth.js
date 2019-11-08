@@ -20,9 +20,10 @@ export const verifyToken = token => {
 };
 
 export const protect = async (req, res, next) => {
+  const invalidMessage = 'Missing or invalid token';
   const bearer = req.headers.authorization;
   if (!bearer || !bearer.startsWith('Bearer ')) {
-    return res.status(401).end();
+    return res.status(401).json({ message: invalidMessage });
   }
 
   const token = bearer.split('Bearer ')[1];
@@ -34,7 +35,7 @@ export const protect = async (req, res, next) => {
       .exec();
 
     if (!admin) {
-      return res.status(401).end();
+      return res.status(401).json({ message: invalidMessage });
     }
 
     req.admin = admin;
