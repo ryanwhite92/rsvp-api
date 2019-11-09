@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import config from './config';
 import { connect } from './utils/db';
+import { ensureAdminExists } from './utils/init';
 import AdminRouter from './resources/admin/admin.router';
 import GuestRouter from './resources/guest/guest.router';
 
@@ -24,6 +25,7 @@ app.get('/', (req, res) => res.send('hello world'));
 const startServer = async () => {
   try {
     await connect(config.dbUrl);
+    ensureAdminExists(config.envVars);
     app.listen(config.port, () =>
       console.log(`API listening on http://localhost:${config.port}/`)
     );
