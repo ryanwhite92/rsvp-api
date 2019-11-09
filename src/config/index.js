@@ -1,7 +1,10 @@
+import envVars from './env';
+
 const env = process.env.NODE_ENV || 'development';
 
 const baseConfig = {
   env,
+  envVars: envVars.parsed,
   isDev: env === 'development',
   port: 8080,
   dbUrl: 'mongodb://localhost:27017/wedding-api-dev',
