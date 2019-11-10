@@ -1,8 +1,14 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import config from '../../config';
 
 var guestSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
+      type: String,
+      required: true
+    },
+    lastName: {
       type: String,
       required: true
     },
@@ -31,5 +37,8 @@ var guestSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Create compound index to prevent the creation of duplicate documents
+guestSchema.index({ firstName: 1, lastName: 1 }, { unique: true });
 
 export const Guest = mongoose.model('guest', guestSchema);
