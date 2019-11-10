@@ -14,11 +14,12 @@ var guestSchema = new mongoose.Schema(
     },
     plusOnes: [
       {
-        type: String,
+        name: String,
         rsvpStatus: {
           type: Boolean,
           default: false
-        }
+        },
+        _id: false
       }
     ],
     rsvpStatus: {
