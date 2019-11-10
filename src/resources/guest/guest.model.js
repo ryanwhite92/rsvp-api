@@ -53,4 +53,9 @@ guestSchema.pre('save', function(next) {
   });
 });
 
+guestSchema.methods.checkPassword = function(password) {
+  const passwordHash = this.password;
+  return bcrypt.compare(password, passwordHash);
+};
+
 export const Guest = mongoose.model('guest', guestSchema);
