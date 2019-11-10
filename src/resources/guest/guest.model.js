@@ -33,12 +33,24 @@ var guestSchema = new mongoose.Schema(
       },
       phone: String,
       email: String
-    }
+    },
+    password: String
   },
   { timestamps: true }
 );
 
 // Create compound index to prevent the creation of duplicate documents
 guestSchema.index({ firstName: 1, lastName: 1 }, { unique: true });
+
+guestSchema.pre('save', function(next) {
+  bcrypt.hash(config.envVars.GUEST_PASSWORD, 10, (err, hash) => {
+    if (err) {
+      return next(err);
+    }
+
+    this.password = hash;
+    next();
+  });
+});
 
 export const Guest = mongoose.model('guest', guestSchema);
