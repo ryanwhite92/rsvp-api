@@ -41,7 +41,7 @@ export const protect = async (req, res, next) => {
     req.admin = admin;
   } catch (e) {
     console.error(e);
-    return res.status(500).end();
+    return res.status(401).json({ message: invalidMessage });
   }
 
   next();
