@@ -1,5 +1,6 @@
 import config from '../config';
 import jwt from 'jsonwebtoken';
+import { Guest } from '../resources/guest/guest.model';
 import { Admin } from '../resources/admin/admin.model';
 
 export const newToken = user => {
@@ -29,16 +30,23 @@ export const protect = async (req, res, next) => {
   const token = bearer.split('Bearer ')[1];
   try {
     const payload = await verifyToken(token);
-    const admin = await Admin.findById(payload._id)
+    let user = await Guest.findById(payload._id)
       .select('-password')
       .lean()
       .exec();
 
-    if (!admin) {
+    if (!user) {
+      user = await Admin.findById(payload._id)
+        .select('-password')
+        .lean()
+        .exec();
+    }
+
+    if (!user) {
       return res.status(401).json({ message: invalidMessage });
     }
 
-    req.admin = admin;
+    req.user = user;
   } catch (e) {
     console.error(e);
     return res.status(401).json({ message: invalidMessage });
