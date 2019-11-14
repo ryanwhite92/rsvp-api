@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import controllers from './guest.controller';
 
+console.log('CONTROLLERS', controllers);
+
 const router = Router();
+
+router.post('/:id/signin', controllers.signin);
 
 router
   .route('/')
