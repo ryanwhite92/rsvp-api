@@ -54,3 +54,48 @@ export const protect = async (req, res, next) => {
 
   next();
 };
+
+export const signin = model => async (req, res) => {
+  let invalidMessage;
+  const { password } = req.body;
+  const query = {};
+
+  if (model.modelName == 'guest') {
+    invalidMessage = 'Invalid id and password';
+    query._id = req.params.id;
+    if (!query._id || !password) {
+      return res.status(400).json({ message: 'Id and password required' });
+    }
+  }
+
+  if (model.modelName == 'admin') {
+    invalidMessage = 'Invalid username and password';
+    query.email = req.body.email;
+    if (!query.email || !password) {
+      return res.status(400).json({ message: 'Email and password required' });
+    }
+  }
+
+  try {
+    const selectFields = Object.keys(query).join(' ');
+    const user = await model
+      .findOne(query)
+      .select(`${selectFields} password`)
+      .exec();
+
+    if (!user) {
+      return res.status(401).json({ message: invalidMessage });
+    }
+
+    const passwordMatch = await user.checkPassword(password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: invalidMessage });
+    }
+
+    const token = newToken(user.toJSON());
+    return res.status(201).json({ token });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).end();
+  }
+};
