@@ -1,11 +1,13 @@
 import { Router } from 'express';
+import { protect } from '../../utils/auth';
 import controllers from './guest.controller';
-
-console.log('CONTROLLERS', controllers);
 
 const router = Router();
 
 router.post('/:id/signin', controllers.signin);
+
+// Only allow authorized users to access guest routes
+router.use(protect);
 
 router
   .route('/')
