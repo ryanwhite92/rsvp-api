@@ -35,7 +35,12 @@ var guestSchema = new mongoose.Schema(
       phone: String,
       email: String
     },
-    password: String
+    password: String,
+    role: {
+      type: String,
+      default: 'guest',
+      enum: ['guest']
+    }
   },
   { timestamps: true }
 );
