@@ -55,6 +55,18 @@ export const protect = async (req, res, next) => {
   next();
 };
 
+// Check that user has sufficient permissions to access and modify resources
+export const checkPermissions = allowedRoles => (req, res, next) => {
+  const { role } = req.user;
+  if (!allowedRoles.includes(role)) {
+    return res
+      .status(403)
+      .json({ message: 'Insufficient permissions to access this resource' });
+  }
+
+  next();
+};
+
 export const signin = model => async (req, res) => {
   let invalidMessage;
   const { password } = req.body;
