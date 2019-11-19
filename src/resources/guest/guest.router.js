@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { protect } from '../../utils/auth';
+import { protect, checkPermissions } from '../../utils/auth';
 import controllers from './guest.controller';
 
 const router = Router();
@@ -11,13 +11,14 @@ router.use(protect);
 
 router
   .route('/')
+  .all(checkPermissions(['admin']))
   .get(controllers.getMany)
   .post(controllers.createOne);
 
 router
   .route('/:id')
-  .get(controllers.getOne)
+  .get(checkPermissions(['admin', 'guest']), controllers.getOne)
   .put(controllers.updateOne)
-  .delete(controllers.removeOne);
+  .delete(checkPermissions(['admin']), controllers.removeOne);
 
 export default router;
