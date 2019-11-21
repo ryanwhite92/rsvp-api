@@ -18,7 +18,13 @@ router
 router
   .route('/:id')
   .get(checkPermissions(['admin', 'guest']), controllers.getOne)
-  .put(controllers.updateOne)
+  .put(checkPermissions(['admin', 'guest']), (req, res) => {
+    if (req.user.role == 'guest') {
+      controllers.updateRsvp(req, res);
+    } else if (req.user.role == 'admin') {
+      controllers.updateOne(req, res);
+    }
+  })
   .delete(checkPermissions(['admin']), controllers.removeOne);
 
 export default router;
