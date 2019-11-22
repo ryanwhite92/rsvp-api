@@ -8,7 +8,6 @@ import { connect } from './utils/db';
 import { ensureAdminExists } from './utils/init';
 import AdminRouter from './resources/admin/admin.router';
 import GuestRouter from './resources/guest/guest.router';
-import { protect } from './utils/auth';
 
 const app = express();
 
@@ -17,11 +16,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+app.use('/guest', GuestRouter);
 app.use('/admin', AdminRouter);
-
-// Only allow authorized users to access API routes
-app.use(protect);
-app.use('/api/guest', GuestRouter);
 
 app.get('/', (req, res) => res.send('hello world'));
 
