@@ -10,4 +10,14 @@ router.use(protect);
 
 router.route('/signup').post(checkPermissions(['admin']), controllers.signup);
 
+router
+  .route('/')
+  .all(checkPermissions(['admin']))
+  .get(controllers.getMany);
+
+router
+  .route('/:id')
+  .all(checkPermissions(['admin']))
+  .get(controllers.getOne);
+
 export default router;
