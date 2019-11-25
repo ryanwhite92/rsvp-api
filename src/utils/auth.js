@@ -111,3 +111,25 @@ export const signin = model => async (req, res) => {
     return res.status(500).end();
   }
 };
+
+// Admin signup
+export const signup = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password required' });
+  }
+
+  try {
+    const admin = await Admin.create({ email, password });
+
+    if (!admin) {
+      return res.status(400).end();
+    }
+
+    const token = newToken(admin.toJSON());
+    return res.status(201).json({ token });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).end();
+  }
+};
