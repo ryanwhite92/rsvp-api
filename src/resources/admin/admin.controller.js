@@ -1,4 +1,7 @@
-import { signin } from '../../utils/auth';
+import { signin, signup } from '../../utils/auth';
 import { Admin } from './admin.model';
 
-export const adminSignin = signin(Admin);
+export default {
+  signin: signin(Admin),
+  signup
+};
