@@ -4,14 +4,14 @@ import { Guest } from '../resources/guest/guest.model';
 import { Admin } from '../resources/admin/admin.model';
 
 export const newToken = user => {
-  return jwt.sign(user, config.secrets.jwt, {
-    expiresIn: config.secrets.jwtExp
+  return jwt.sign(user, config.JWT_SECRET, {
+    expiresIn: config.JWT_EXPIRY
   });
 };
 
 export const verifyToken = token => {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, config.secrets.jwt, (err, payload) => {
+    jwt.verify(token, config.JWT_SECRET, (err, payload) => {
       if (err) {
         return reject(err);
       }

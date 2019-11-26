@@ -49,7 +49,7 @@ var guestSchema = new mongoose.Schema(
 guestSchema.index({ firstName: 1, lastName: 1 }, { unique: true });
 
 guestSchema.pre('save', function(next) {
-  bcrypt.hash(config.envVars.GUEST_PASSWORD, 10, (err, hash) => {
+  bcrypt.hash(config.GUEST_PASSWORD, 10, (err, hash) => {
     if (err) {
       return next(err);
     }

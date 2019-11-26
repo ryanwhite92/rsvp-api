@@ -23,10 +23,10 @@ app.get('/', (req, res) => res.send('hello world'));
 
 const startServer = async () => {
   try {
-    await connect(config.dbUrl);
-    ensureAdminExists(config.envVars);
-    app.listen(config.port, () =>
-      console.log(`API listening on http://localhost:${config.port}/`)
+    await connect(config.DB_URL);
+    ensureAdminExists();
+    app.listen(config.PORT, () =>
+      console.log(`API listening on http://localhost:${config.PORT}/`)
     );
   } catch (e) {
     console.error(e);

@@ -1,19 +1,13 @@
-import envVars from './env';
+import dotenv from './env';
 
-const env = process.env.NODE_ENV || 'development';
+const envVars = dotenv.parsed;
+const ENV = process.env.NODE_ENV || 'development';
+const PORT = process.env.PORT || 8080;
 
 const baseConfig = {
-  env,
-  envVars: envVars.parsed,
-  isDev: env === 'development',
-  port: 8080,
-  dbUrl: 'mongodb://localhost:27017/wedding-api-dev',
-  secrets: {
-    jwt: 'test',
-    jwtExp: '1d'
-  }
+  ...envVars,
+  ENV,
+  PORT
 };
-
-// Todo: Create different configs for dev, prod & testing environments
 
 export default baseConfig;

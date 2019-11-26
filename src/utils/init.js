@@ -1,3 +1,4 @@
+import config from '../config';
 import { Admin } from '../resources/admin/admin.model';
 
 export const ensureAdminExists = async envVars => {
@@ -8,8 +9,8 @@ export const ensureAdminExists = async envVars => {
 
     if (!admin.length) {
       admin = await Admin.create({
-        email: envVars.ADMIN_EMAIL,
-        password: envVars.ADMIN_PASSWORD
+        email: config.ADMIN_EMAIL,
+        password: config.ADMIN_PASSWORD
       });
     }
   } catch (e) {
