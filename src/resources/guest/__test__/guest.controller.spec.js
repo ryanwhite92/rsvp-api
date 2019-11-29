@@ -16,4 +16,12 @@ describe('guest controllers', () => {
       expect(isFunction(controllers[name])).toBe(true)
     );
   });
+
+  test('has signin controller', () => {
+    expect(isFunction(controllers.signin)).toBe(true);
+  });
+
+  test('has updateRsvp controller', () => {
+    expect(isFunction(controllers.updateRsvp)).toBe(true);
+  });
 });
