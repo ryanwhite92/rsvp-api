@@ -12,7 +12,7 @@ const updateRsvp = async (req, res) => {
       .exec();
 
     if (!guest) {
-      return res.status(400).end();
+      return res.status(404).end();
     }
 
     // Update rsvpStatus for existing plusOnes
@@ -32,7 +32,7 @@ const updateRsvp = async (req, res) => {
     const updatedGuest = await Guest.findByIdAndUpdate(
       id,
       {
-        rsvpStatus,
+        rsvpStatus: rsvpStatus ? rsvpStatus : guest.rsvpStatus,
         plusOnes: updatedPlusOnes
       },
       { new: true }
