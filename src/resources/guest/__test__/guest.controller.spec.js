@@ -1,5 +1,6 @@
 import controllers from '../guest.controller';
 import mongoose from 'mongoose';
+import { Guest } from '../guest.model';
 
 const isFunction = f => typeof f == 'function';
 
@@ -27,6 +28,32 @@ describe('guest controllers', () => {
   });
 
   describe('updateRsvp controller', () => {
+    test('update rsvp status to true', async () => {
+      expect.assertions(3);
+
+      const mockGuest = await Guest.create({
+        firstName: 'Test First',
+        lastName: 'Test Last',
+        contact: { method: 'email' }
+      });
+      const req = {
+        params: { id: mockGuest._id },
+        body: { rsvpStatus: true }
+      };
+      const res = {
+        status(status) {
+          expect(status).toBe(200);
+          return this;
+        },
+        json(result) {
+          expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
+          expect(result.data.rsvpStatus).toBe(true);
+        }
+      };
+
+      await controllers.updateRsvp(req, res);
+    });
+
     test("404 if guest isn't found (invalid id)", async () => {
       expect.assertions(2);
 
