@@ -36,10 +36,12 @@ describe('guest controllers', () => {
         lastName: 'Test Last',
         contact: { method: 'email' }
       });
+
       const req = {
         params: { id: mockGuest._id },
         body: { rsvpStatus: true }
       };
+
       const res = {
         status(status) {
           expect(status).toBe(200);
@@ -48,6 +50,49 @@ describe('guest controllers', () => {
         json(result) {
           expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
           expect(result.data.rsvpStatus).toBe(true);
+        }
+      };
+
+      await controllers.updateRsvp(req, res);
+    });
+
+    test('update own and plus one rsvp status', async () => {
+      expect.assertions(4);
+
+      const mockGuest = await Guest.create({
+        firstName: 'Test First',
+        lastName: 'Test Last',
+        plusOnes: [{ name: 'Plus One' }, { name: 'Plus Two' }],
+        contact: { method: 'email' }
+      });
+
+      const req = {
+        params: { id: mockGuest._id },
+        body: {
+          rsvpStatus: true,
+          plusOnes: [
+            { name: 'Plus One', rsvpStatus: true },
+            { name: 'Plus Two', rsvpStatus: false }
+          ]
+        }
+      };
+
+      const expectedResult = [
+        { name: 'Plus One', rsvpStatus: true },
+        { name: 'Plus Two', rsvpStatus: false }
+      ];
+
+      const res = {
+        status(status) {
+          expect(status).toBe(200);
+          return this;
+        },
+        json(result) {
+          expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
+          expect(result.data.rsvpStatus).toBe(true);
+          expect(result.data.plusOnes).toEqual(
+            expect.arrayContaining(expectedResult)
+          );
         }
       };
 
@@ -63,6 +108,7 @@ describe('guest controllers', () => {
         },
         body: {}
       };
+
       const res = {
         status(status) {
           expect(status).toBe(404);
