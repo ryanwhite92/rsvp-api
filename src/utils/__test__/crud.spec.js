@@ -54,4 +54,53 @@ describe('crud controllers', () => {
       await getOne(Guest)(req, res);
     });
   });
+
+  describe('getMany', () => {
+    test('gets all existing docs', async () => {
+      expect.assertions(2);
+
+      await Guest.create([
+        {
+          firstName: 'Test First',
+          lastName: 'Test Last',
+          contact: { method: 'email' }
+        },
+        {
+          firstName: 'Test',
+          lastName: 'Testerson',
+          contact: { method: 'email' }
+        }
+      ]);
+
+      const req = {};
+      const res = {
+        status(status) {
+          expect(status).toBe(200);
+          return this;
+        },
+        json(result) {
+          expect(result.data.length).toBe(2);
+        }
+      };
+
+      await getMany(Guest)(req, res);
+    });
+
+    test('404 if no docs exist', async () => {
+      expect.assertions(2);
+
+      const req = {};
+      const res = {
+        status(status) {
+          expect(status).toBe(404);
+          return this;
+        },
+        end() {
+          expect(true).toBe(true);
+        }
+      };
+
+      await getMany(Guest)(req, res);
+    });
+  });
 });

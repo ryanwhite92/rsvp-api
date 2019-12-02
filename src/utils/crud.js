@@ -21,12 +21,12 @@ export const getOne = model => async (req, res) => {
 export const getMany = model => async (req, res) => {
   try {
     const docs = await model
-      .find()
+      .find({})
       .lean()
       .exec();
 
-    if (!docs) {
-      return res.status(400).end();
+    if (!docs.length) {
+      return res.status(404).end();
     }
 
     return res.status(200).json({ data: docs });
