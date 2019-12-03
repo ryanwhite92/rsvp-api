@@ -135,4 +135,66 @@ describe('crud controllers', () => {
       await createOne(Guest)(req, res);
     });
   });
+
+  describe('updateOne', () => {
+    test('find doc by id to update', async () => {
+      expect.assertions(5);
+
+      const mockGuest = await Guest.create({
+        firstName: 'Test First',
+        lastName: 'Test Last',
+        contact: { method: 'email' }
+      });
+
+      const update = {
+        firstName: 'First',
+        lastName: 'Last',
+        contact: { method: 'phone' }
+      };
+
+      const req = {
+        params: {
+          id: mockGuest._id
+        },
+        body: update
+      };
+
+      const res = {
+        status(status) {
+          expect(status).toBe(200);
+          return this;
+        },
+        json(result) {
+          expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
+          expect(result.data.firstName).toBe(update.firstName);
+          expect(result.data.lastName).toBe(update.lastName);
+          expect(result.data.contact.method).toBe(update.contact.method);
+        }
+      };
+
+      await updateOne(Guest)(req, res);
+    });
+
+    test('404 if no doc is found', async () => {
+      expect.assertions(2);
+
+      const id = mongoose.Types.ObjectId();
+
+      const req = {
+        params: { id }
+      };
+
+      const res = {
+        status(status) {
+          expect(status).toBe(404);
+          return this;
+        },
+        end() {
+          expect(true).toBe(true);
+        }
+      };
+
+      await updateOne(Guest)(req, res);
+    });
+  });
 });

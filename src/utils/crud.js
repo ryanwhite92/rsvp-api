@@ -61,7 +61,7 @@ export const updateOne = model => async (req, res) => {
       .exec();
 
     if (!updatedDoc) {
-      return res.status(400).end();
+      return res.status(404).end();
     }
 
     return res.status(200).json({ data: updatedDoc });
