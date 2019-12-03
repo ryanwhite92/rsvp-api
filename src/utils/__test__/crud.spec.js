@@ -103,4 +103,36 @@ describe('crud controllers', () => {
       await getMany(Guest)(req, res);
     });
   });
+
+  describe('createOne', () => {
+    test('creates a new doc', async () => {
+      expect.assertions(3);
+
+      const guest = {
+        firstName: 'Test First',
+        lastName: 'Test Last'
+      };
+
+      const req = {
+        body: {
+          firstName: 'Test First',
+          lastName: 'Test Last',
+          contact: { method: 'email' }
+        }
+      };
+
+      const res = {
+        status(status) {
+          expect(status).toBe(201);
+          return this;
+        },
+        json(result) {
+          expect(result.data.firstName).toBe(guest.firstName);
+          expect(result.data.lastName).toBe(guest.lastName);
+        }
+      };
+
+      await createOne(Guest)(req, res);
+    });
+  });
 });
