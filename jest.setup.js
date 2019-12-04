@@ -5,7 +5,7 @@ import { Guest } from './src/resources/guest/guest.model';
 
 const models = { Admin, Guest };
 
-const url = process.env.DB_URL;
+const url = process.env.TEST_DB_URL;
 
 const remove = collection => {
   return new Promise((resolve, reject) => {
