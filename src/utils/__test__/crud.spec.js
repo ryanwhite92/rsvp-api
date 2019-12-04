@@ -197,4 +197,54 @@ describe('crud controllers', () => {
       await updateOne(Guest)(req, res);
     });
   });
+
+  describe('removeOne', () => {
+    test('find doc by id and remove', async () => {
+      expect.assertions(2);
+
+      const mockGuest = await Guest.create({
+        firstName: 'Test First',
+        lastName: 'Test Last',
+        contact: { method: 'email' }
+      });
+
+      const req = {
+        params: { id: mockGuest._id }
+      };
+
+      const res = {
+        status(status) {
+          expect(status).toBe(200);
+          return this;
+        },
+        json(result) {
+          expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
+        }
+      };
+
+      await removeOne(Guest)(req, res);
+    });
+
+    test('404 if no doc is found', async () => {
+      expect.assertions(2);
+
+      const id = mongoose.Types.ObjectId();
+
+      const req = {
+        params: { id }
+      };
+
+      const res = {
+        status(status) {
+          expect(status).toBe(404);
+          return this;
+        },
+        end() {
+          expect(true).toBe(true);
+        }
+      };
+
+      await removeOne(Guest)(req, res);
+    });
+  });
 });
