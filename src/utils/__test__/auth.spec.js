@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import config from '../../config';
-import { newToken, verifyToken, protect } from '../auth';
+import { newToken, verifyToken, protect, checkPermissions } from '../auth';
 import { Guest } from '../../resources/guest/guest.model';
 import { Admin } from '../../resources/admin/admin.model';
 
@@ -114,6 +114,33 @@ describe('authentication:', () => {
       expect(`${req.user._id}`).toBe(`${mockAdmin._id}`);
       expect(req.user.role).toBe('admin');
       expect(req.user).not.toHaveProperty('password');
+    });
+  });
+
+  describe('checkPermissions', () => {
+    test('user must have sufficient permissions', () => {
+      const req = { user: { role: 'guest' } };
+      const res = {
+        status(status) {
+          expect(status).toBe(403);
+          return this;
+        },
+        json(result) {
+          expect(result).toHaveProperty('message');
+        }
+      };
+      const next = jest.fn();
+
+      checkPermissions(['admin'])(req, res, next);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    test('passes through user with sufficient permissions', () => {
+      const req = { user: { role: 'guest' } };
+      const next = jest.fn();
+
+      checkPermissions(['guest'])(req, {}, next);
+      expect(next).toHaveBeenCalled();
     });
   });
 });
