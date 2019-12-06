@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { newToken, verifyToken, protect } from '../auth';
 import config from '../../config';
+import { newToken, verifyToken, protect } from '../auth';
+import { Guest } from '../../resources/guest/guest.model';
+import { Admin } from '../../resources/admin/admin.model';
 
 describe('authentication:', () => {
   describe('newToken', () => {
@@ -59,6 +61,59 @@ describe('authentication:', () => {
       };
 
       await protect(req, res);
+    });
+
+    test('must be a real user', async () => {
+      expect.assertions(2);
+
+      const token = `Bearer ${newToken({ id: mongoose.Types.ObjectId() })}`;
+      const req = { headers: { authorization: token } };
+      const res = {
+        status(status) {
+          expect(status).toBe(401);
+          return this;
+        },
+        json(result) {
+          expect(result.message).toBe(invalidMessage);
+        }
+      };
+
+      await protect(req, res);
+    });
+
+    test('finds guest from token and passes on', async () => {
+      expect.assertions(3);
+
+      const mockGuest = await Guest.create({
+        firstName: 'Test First',
+        lastName: 'Test Last',
+        contact: { method: 'email' }
+      });
+      const token = `Bearer ${newToken(mockGuest.toJSON())}`;
+      const req = { headers: { authorization: token } };
+      const next = () => {};
+
+      await protect(req, {}, next);
+      expect(`${req.user._id}`).toBe(`${mockGuest._id}`);
+      expect(req.user.role).toBe('guest');
+      expect(req.user).not.toHaveProperty('password');
+    });
+
+    test('finds admin from token and passes on', async () => {
+      expect.assertions(3);
+
+      const mockAdmin = await Admin.create({
+        email: 'test@email.com',
+        password: 'admin'
+      });
+      const token = `Bearer ${newToken(mockAdmin.toJSON())}`;
+      const req = { headers: { authorization: token } };
+      const next = () => {};
+
+      await protect(req, {}, next);
+      expect(`${req.user._id}`).toBe(`${mockAdmin._id}`);
+      expect(req.user.role).toBe('admin');
+      expect(req.user).not.toHaveProperty('password');
     });
   });
 });
