@@ -1,5 +1,6 @@
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { newToken, verifyToken } from '../auth';
+import { newToken, verifyToken, protect } from '../auth';
 import config from '../../config';
 
 describe('authentication:', () => {
@@ -20,6 +21,44 @@ describe('authentication:', () => {
       const user = await verifyToken(token);
 
       expect(user.id).toBe(id);
+    });
+  });
+
+  describe('protect', () => {
+    const invalidMessage = 'Missing or invalid token';
+
+    test('looks for bearer token in headers', async () => {
+      expect.assertions(2);
+
+      const req = { headers: {} };
+      const res = {
+        status(status) {
+          expect(status).toBe(401);
+          return this;
+        },
+        json(result) {
+          expect(result.message).toBe(invalidMessage);
+        }
+      };
+
+      await protect(req, res);
+    });
+
+    test('token must have correct prefix', async () => {
+      expect.assertions(2);
+
+      const req = { headers: { authorization: newToken({ id: '123asdf' }) } };
+      const res = {
+        status(status) {
+          expect(status).toBe(401);
+          return this;
+        },
+        json(result) {
+          expect(result.message).toBe(invalidMessage);
+        }
+      };
+
+      await protect(req, res);
     });
   });
 });
