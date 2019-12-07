@@ -5,7 +5,7 @@
   "main": "server.js",
   "private": true,
   "scripts": {
-    "build": "babel src --out-dir dist",
+    "build": "babel src --out-dir dist --ignore src/**/*.spec.js",
     "format": "prettier --write \"**/*.{js,jsx}\"",
     "lint": "eslint \"**/*.{js,jsx}\" --quiet",
     "dev": "nodemon --exec npm run restart",
