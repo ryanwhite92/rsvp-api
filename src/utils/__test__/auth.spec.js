@@ -168,6 +168,7 @@ describe('authentication:', () => {
 
         await signin(Guest)(req, res);
       });
+
       test('guest must be real', async () => {
         expect.assertions(2);
 
@@ -240,6 +241,87 @@ describe('authentication:', () => {
         };
 
         await signin(Guest)(req, res);
+      });
+    });
+
+    describe('admin', () => {
+      test('admin signin requires email and password', async () => {
+        expect.assertions(2);
+
+        const req = { body: {} };
+        const res = {
+          status(status) {
+            expect(status).toBe(400);
+            return this;
+          },
+          json(result) {
+            expect(result).toHaveProperty('message');
+          }
+        };
+
+        await signin(Admin)(req, res);
+      });
+
+      test('admin must be real', async () => {
+        expect.assertions(2);
+
+        const req = { body: { email: 'admin@email.com', password: 'admin' } };
+        const res = {
+          status(status) {
+            expect(status).toBe(401);
+            return this;
+          },
+          json(result) {
+            expect(result).toHaveProperty('message');
+          }
+        };
+
+        await signin(Admin)(req, res);
+      });
+
+      test('passwords must match', async () => {
+        expect.assertions(2);
+
+        const mockAdmin = await Admin.create({
+          email: 'admin@email.com',
+          password: 'admin'
+        });
+        const req = { body: { email: mockAdmin.email, password: 'wrong' } };
+        const res = {
+          status(status) {
+            expect(status).toBe(401);
+            return this;
+          },
+          json(result) {
+            expect(result).toHaveProperty('message');
+          }
+        };
+
+        await signin(Admin)(req, res);
+      });
+
+      test('creates new token', async () => {
+        expect.assertions(2);
+
+        const fields = {
+          email: 'admin@email.com',
+          password: 'admin'
+        };
+        const mockAdmin = await Admin.create(fields);
+        const req = { body: fields };
+        const res = {
+          status(status) {
+            expect(status).toBe(201);
+            return this;
+          },
+          async json(result) {
+            let user = await verifyToken(result.token);
+            user = await Admin.findById(user._id);
+            expect(`${user._id}`).toBe(`${mockAdmin._id}`);
+          }
+        };
+
+        await signin(Admin)(req, res);
       });
     });
   });
