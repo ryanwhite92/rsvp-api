@@ -1,7 +1,13 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import config from '../../config';
-import { newToken, verifyToken, protect, checkPermissions } from '../auth';
+import {
+  newToken,
+  verifyToken,
+  protect,
+  checkPermissions,
+  signin
+} from '../auth';
 import { Guest } from '../../resources/guest/guest.model';
 import { Admin } from '../../resources/admin/admin.model';
 
@@ -141,6 +147,100 @@ describe('authentication:', () => {
 
       checkPermissions(['guest'])(req, {}, next);
       expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('signin', () => {
+    describe('guest', () => {
+      test('guest signin requires id and password', async () => {
+        expect.assertions(2);
+
+        const req = { body: {}, params: {} };
+        const res = {
+          status(status) {
+            expect(status).toBe(400);
+            return this;
+          },
+          json(result) {
+            expect(result).toHaveProperty('message');
+          }
+        };
+
+        await signin(Guest)(req, res);
+      });
+      test('guest must be real', async () => {
+        expect.assertions(2);
+
+        const req = {
+          body: { password: 'guest' },
+          params: { id: mongoose.Types.ObjectId() }
+        };
+        const res = {
+          status(status) {
+            expect(status).toBe(401);
+            return this;
+          },
+          json(result) {
+            expect(result).toHaveProperty('message');
+          }
+        };
+
+        await signin(Guest)(req, res);
+      });
+
+      test('passwords must match', async () => {
+        expect.assertions(2);
+
+        const mockGuest = await Guest.create({
+          firstName: 'Test First',
+          lastName: 'Test Last',
+          contact: { method: 'email' }
+        });
+        const req = {
+          body: { password: 'wrong' },
+          params: { id: mockGuest._id }
+        };
+        const res = {
+          status(status) {
+            expect(status).toBe(401);
+            return this;
+          },
+          json(result) {
+            expect(result).toHaveProperty('message');
+          }
+        };
+
+        await signin(Guest)(req, res);
+      });
+
+      test('creates new token', async () => {
+        expect.assertions(2);
+
+        const mockGuest = await Guest.create({
+          firstName: 'Test First',
+          lastName: 'Test Last',
+          contact: { method: 'email' }
+        });
+        const req = {
+          body: { password: config.GUEST_PASSWORD },
+          params: { id: mockGuest._id }
+        };
+        const res = {
+          status(status) {
+            expect(status).toBe(201);
+            return this;
+          },
+          async json(result) {
+            let guest = await verifyToken(result.token);
+            guest = await Guest.findById(guest._id)
+              .lean()
+              .exec();
+            expect(`${guest._id}`).toBe(`${mockGuest._id}`);
+          }
+        };
+
+        await signin(Guest)(req, res);
+      });
     });
   });
 });
