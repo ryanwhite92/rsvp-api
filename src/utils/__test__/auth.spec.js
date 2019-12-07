@@ -6,7 +6,8 @@ import {
   verifyToken,
   protect,
   checkPermissions,
-  signin
+  signin,
+  signup
 } from '../auth';
 import { Guest } from '../../resources/guest/guest.model';
 import { Admin } from '../../resources/admin/admin.model';
@@ -323,6 +324,46 @@ describe('authentication:', () => {
 
         await signin(Admin)(req, res);
       });
+    });
+  });
+
+  describe('signup', () => {
+    test('requires email and password', async () => {
+      expect.assertions(2);
+
+      const req = { body: {} };
+      const res = {
+        status(status) {
+          expect(status).toBe(400);
+          return this;
+        },
+        json(result) {
+          expect(result).toHaveProperty('message');
+        }
+      };
+
+      await signup(req, res);
+    });
+
+    test('creates admin and and sends token', async () => {
+      expect.assertions();
+
+      const req = { body: { email: 'admin@email.com', password: 'admin' } };
+      const res = {
+        status(status) {
+          expect(status).toBe(201);
+          return this;
+        },
+        async json(result) {
+          let user = await verifyToken(result.token);
+          user = await Admin.findById(user._id)
+            .lean()
+            .exec();
+          expect(user.email).toBe(req.body.email);
+        }
+      };
+
+      await signup(req, res);
     });
   });
 });
