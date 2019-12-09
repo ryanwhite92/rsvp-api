@@ -9,7 +9,7 @@ import { ensureAdminExists } from './utils/init';
 import AdminRouter from './resources/admin/admin.router';
 import GuestRouter from './resources/guest/guest.router';
 
-const app = express();
+export const app = express();
 
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());
