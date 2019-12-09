@@ -11,7 +11,10 @@
     "dev": "nodemon --exec npm run restart",
     "restart": "rimraf dist && npm run build && npm run start",
     "start": "node dist/server.js",
-    "test": "NODE_ENV=testing jest --forceExit --detectOpenHandles"
+    "test": "NODE_ENV=testing jest --forceExit --detectOpenHandles",
+    "test-resources": "npm run test --testPathPattern resources",
+    "test-server": "npm run test --testPathPattern server",
+    "test-utils": "npm run test --testPathPattern utils"
   },
   "author": {
     "name": "Ryan White",
