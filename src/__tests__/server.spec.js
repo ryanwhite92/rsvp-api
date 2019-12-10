@@ -5,9 +5,10 @@ import { Guest } from '../resources/guest/guest.model';
 import { newToken } from '../utils/auth';
 
 describe('API authentication', () => {
+  let guest;
   let token;
   beforeEach(async () => {
-    const guest = await Guest.create({
+    guest = await Guest.create({
       firstName: 'Test First',
       lastName: 'Test Last',
       contact: { method: 'email' }
@@ -49,8 +50,19 @@ describe('API authentication', () => {
 
       results.forEach(res => expect(res.statusCode).toBe(403));
     });
+
+    test('passes with jwt and correct permissions', async () => {
+      const jwt = `Bearer ${token}`;
+      const results = await Promise.all([
+        request(app)
+          .get(`/guest/${guest._id}`)
+          .set('Authorization', jwt),
+        request(app)
+          .put(`/guest/${guest._id}`)
+          .set('Authorization', jwt)
+      ]);
+
+      results.forEach(res => expect(res.statusCode).toBe(200));
+    });
   });
 });
-
-// passes with jwt
-// correct response
