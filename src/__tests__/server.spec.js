@@ -23,5 +23,34 @@ describe('API authentication', () => {
       response = await request(app).get('/admin');
       expect(response.statusCode).toBe(401);
     });
+
+    test('user must have correct permissions to access resource', async () => {
+      const jwt = `Bearer ${token}`;
+      const results = await Promise.all([
+        request(app)
+          .get('/guest')
+          .set('Authorization', jwt),
+        request(app)
+          .post('/guest')
+          .set('Authorization', jwt),
+        request(app)
+          .delete('/guest')
+          .set('Authorization', jwt),
+        request(app)
+          .get('/admin')
+          .set('Authorization', jwt),
+        request(app)
+          .get(`/admin/${mongoose.Types.ObjectId()}`)
+          .set('Authorization', jwt),
+        request(app)
+          .post('/admin/signup')
+          .set('Authorization', jwt)
+      ]);
+
+      results.forEach(res => expect(res.statusCode).toBe(403));
+    });
   });
 });
+
+// passes with jwt
+// correct response
