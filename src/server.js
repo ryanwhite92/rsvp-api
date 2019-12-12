@@ -31,7 +31,8 @@ if (config.ENV == 'development') {
 app.use('/guest', GuestRouter);
 app.use('/admin', AdminRouter);
 
-app.get('/', (req, res) => res.send('hello world'));
+// Send 404 if route doesn't exist
+app.all('*', (req, res) => res.status(404).json({ message: 'Not found' }));
 
 const startServer = async () => {
   try {
