@@ -4,11 +4,11 @@ import { protect, checkPermissions } from '../../utils/auth';
 
 const router = Router();
 
-router.route('/signin').post(controllers.signin);
+router.post('/signin', controllers.signin);
 
 router.use(protect);
 
-router.route('/signup').post(checkPermissions(['admin']), controllers.signup);
+router.post('/signup', checkPermissions(['admin']), controllers.signup);
 
 router
   .route('/')
