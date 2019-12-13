@@ -1,5 +1,6 @@
 import config from '../config';
 import jwt from 'jsonwebtoken';
+import rateLimiter from '../utils/rateLimiter';
 import { Guest } from '../resources/guest/guest.model';
 import { Admin } from '../resources/admin/admin.model';
 
@@ -88,27 +89,77 @@ export const signin = model => async (req, res) => {
     }
   }
 
-  try {
-    const selectFields = Object.keys(query).join(' ');
-    const user = await model
-      .findOne(query)
-      .select(`${selectFields} password`)
-      .exec();
+  const ipAddr = req.ip;
+  const username = model.modelName == 'admin' ? query.email : query._id;
+  const usernameIPkey = rateLimiter.getUsernameIPkey(username, ipAddr);
+  const [resUsernameAndIP, resSlowByIP] = await Promise.all([
+    rateLimiter.consecutiveFailsByUsernameAndIP.get(usernameIPkey),
+    rateLimiter.slowBruteByIP.get(ipAddr)
+  ]);
 
-    if (!user) {
-      return res.status(401).json({ message: invalidMessage });
+  let retrySecs = 0;
+  // check if IP or username + IP are already blocked
+  if (
+    resSlowByIP !== null &&
+    resSlowByIP.consumedPoints > rateLimiter.maxWrongAttemptsByIPperDay
+  ) {
+    retrySecs = Math.round(resSlowByIP.msBeforeNext / 1000) || 1;
+  } else if (
+    resUsernameAndIP !== null &&
+    resUsernameAndIP.consumedPoints >
+      rateLimiter.maxConsecutiveFailsByUsernameAndIP
+  ) {
+    retrySecs = Math.round(resUsernameAndIP.msBeforeNext / 1000) || 1;
+  }
+
+  if (retrySecs > 0) {
+    res.set('Retry-After', String(retrySecs));
+    res.status(429).json({ message: 'Too many requests' });
+  } else {
+    try {
+      const selectFields = Object.keys(query).join(' ');
+      const user = await model
+        .findOne(query)
+        .select(`${selectFields} password`)
+        .exec();
+
+      const passwordMatch = user ? await user.checkPassword(password) : false;
+      if (!user || !passwordMatch) {
+        try {
+          const promises = [rateLimiter.slowBruteByIP.consume(ipAddr)];
+          // Count failed attempts by username + IP if user exists
+          if (user) {
+            promises.push(
+              rateLimiter.consecutiveFailsByUsernameAndIP.consume(usernameIPkey)
+            );
+          }
+
+          await Promise.all(promises);
+          return res.status(401).json({ message: invalidMessage });
+        } catch (rlRejected) {
+          if (rlRejected instanceof Error) {
+            throw rlRejected;
+          } else {
+            res.set(
+              'Retry-After',
+              String(Math.round(rlRejected.msBeforeNext / 1000)) || 1
+            );
+            return res.status(429).json({ message: 'Too many requests' });
+          }
+        }
+      }
+
+      // reset on successful authorization
+      if (resUsernameAndIP !== null && resUsernameAndIP.consumedPoints > 0) {
+        await rateLimiter.consecutiveFailsByUsernameAndIP.delete(usernameIPkey);
+      }
+
+      const token = newToken(user.toJSON());
+      return res.status(201).json({ token });
+    } catch (e) {
+      console.error(e);
+      return res.status(500).end();
     }
-
-    const passwordMatch = await user.checkPassword(password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: invalidMessage });
-    }
-
-    const token = newToken(user.toJSON());
-    return res.status(201).json({ token });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).end();
   }
 };
 
