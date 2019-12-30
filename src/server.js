@@ -3,6 +3,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
+import cors from 'cors';
 import path from 'path';
 import * as rfs from 'rotating-file-stream';
 import config from './config';
@@ -12,6 +13,11 @@ import AdminRouter from './resources/admin/admin.router';
 import GuestRouter from './resources/guest/guest.router';
 
 export const app = express();
+
+const corsOptions = {
+  origin: config.CORS_ALLOWED_ORIGIN
+};
+app.use(cors(corsOptions));
 
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());
