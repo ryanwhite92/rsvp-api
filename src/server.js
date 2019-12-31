@@ -4,6 +4,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
+import helmet from 'helmet';
 import path from 'path';
 import * as rfs from 'rotating-file-stream';
 import config from './config';
@@ -14,10 +15,12 @@ import GuestRouter from './resources/guest/guest.router';
 
 export const app = express();
 
-const corsOptions = {
-  origin: config.CORS_ALLOWED_ORIGIN
-};
-app.use(cors(corsOptions));
+app.use(helmet()); // Set security-related HTTP headers
+app.use(
+  cors({
+    origin: config.CORS_ALLOWED_ORIGIN
+  })
+);
 
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());
