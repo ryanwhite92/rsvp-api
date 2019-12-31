@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import path from 'path';
 import * as rfs from 'rotating-file-stream';
 import config from './config';
+import mongoSanitize from 'express-mongo-sanitize';
 import { connect } from './utils/db';
 import { ensureAdminExists } from './utils/init';
 import AdminRouter from './resources/admin/admin.router';
@@ -27,6 +28,10 @@ if (config.ENV == 'production') {
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Sanitize user input by removing keys that start with reserved mongodb
+// operators (`$` or `.`) to attempt preventing malicious input
+app.use(mongoSanitize());
 
 if (config.ENV == 'development') {
   app.use(morgan('dev'));
