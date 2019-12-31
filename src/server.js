@@ -15,12 +15,14 @@ import GuestRouter from './resources/guest/guest.router';
 
 export const app = express();
 
-app.use(helmet()); // Set security-related HTTP headers
-app.use(
-  cors({
-    origin: config.CORS_ALLOWED_ORIGIN
-  })
-);
+if (config.ENV == 'production') {
+  app.use(helmet()); // Set security-related HTTP headers
+  app.use(
+    cors({
+      origin: config.CORS_ALLOWED_ORIGIN
+    })
+  );
+}
 
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());
