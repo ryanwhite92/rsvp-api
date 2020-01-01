@@ -16,7 +16,6 @@ const updateRsvp = async (req, res) => {
     }
 
     // Update rsvpStatus for existing plusOnes
-    // Todo: Add logging if user tries to add additional plusOne(s)
     const updatedPlusOnes = guest.plusOnes.map(guestPlusOne => {
       plusOnes.forEach(plusOne => {
         if (

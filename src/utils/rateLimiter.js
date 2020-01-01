@@ -11,7 +11,6 @@ const mongoOpts = {
   useFindAndModify: false
 };
 
-// const mongoConn = mongoose.connection; // use existing mongoose connection (or create new rate-limiting-only db since don't need to backup...)
 const mongoConn = mongoose.createConnection(
   config.RATE_LIMITER_DB_URL,
   mongoOpts
