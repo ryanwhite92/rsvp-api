@@ -6,6 +6,7 @@ export const connect = (url = options.DB_URL, opts = {}) => {
     ...opts,
     useUnifiedTopology: true,
     useNewUrlParser: true,
+    useCreateIndex: true,
     useFindAndModify: false
   });
 };

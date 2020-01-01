@@ -7,6 +7,7 @@ const mongoOpts = {
   reconnectInterval: 100, // Reconnect every 100ms
   useUnifiedTopology: true,
   useNewUrlParser: true,
+  useCreateIndex: true,
   useFindAndModify: false
 };
 
