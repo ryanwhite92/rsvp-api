@@ -38,6 +38,12 @@ beforeEach(async () => {
   }
 });
 afterEach(async () => {
-  await mongoose.connection.db.dropDatabase();
+  await mongoose.connections[0].db.dropDatabase();
+  // await mongoose.disconnect();
+});
+afterAll(async () => {
+  await Promise.all(
+    mongoose.connections.map(connection => connection.db.dropDatabase())
+  );
   await mongoose.disconnect();
 });
