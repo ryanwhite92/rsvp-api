@@ -68,4 +68,6 @@ guestSchema.methods.checkPassword = function(password) {
   return bcrypt.compare(password, passwordHash);
 };
 
-export const Guest = mongoose.model('guest', guestSchema);
+// export const Guest = mongoose.model('guest', guestSchema);
+// Register model on main mongodb connection
+export const Guest = mongoose.connection.model('guest', guestSchema);

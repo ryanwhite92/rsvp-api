@@ -1,7 +1,20 @@
 import { RateLimiterMongo } from 'rate-limiter-flexible';
 import mongoose from 'mongoose';
+import config from '../config';
 
-const mongoConn = mongoose.connection;
+const mongoOpts = {
+  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+  reconnectInterval: 100, // Reconnect every 100ms
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useFindAndModify: false
+};
+
+// const mongoConn = mongoose.connection; // use existing mongoose connection (or create new rate-limiting-only db since don't need to backup...)
+const mongoConn = mongoose.createConnection(
+  config.RATE_LIMITER_DB_URL,
+  mongoOpts
+);
 
 const maxWrongAttemptsByIPperDay = 100;
 const maxConsecutiveFailsByUsernameAndIP = 10;
