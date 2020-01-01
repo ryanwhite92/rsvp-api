@@ -2,7 +2,7 @@
   "name": "wedding-api",
   "version": "0.0.1",
   "description": "Track wedding logistics",
-  "main": "server.js",
+  "main": "index.js",
   "private": true,
   "scripts": {
     "build": "babel src --out-dir dist --ignore src/**/*.spec.js",
@@ -10,7 +10,7 @@
     "lint": "eslint \"**/*.{js,jsx}\" --quiet",
     "dev": "nodemon --exec npm run restart",
     "restart": "rimraf dist && npm run build && npm run start",
-    "start": "node dist/server.js",
+    "start": "node dist/index.js",
     "test": "NODE_ENV=testing jest --forceExit --detectOpenHandles",
     "test-resources": "npm run test --testPathPattern resources",
     "test-server": "npm run test --testPathPattern server",

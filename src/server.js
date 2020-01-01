@@ -50,7 +50,7 @@ app.use('/admin', AdminRouter);
 // Send 404 if route doesn't exist
 app.all('*', (req, res) => res.status(404).json({ message: 'Not found' }));
 
-const startServer = async () => {
+export const startServer = async () => {
   try {
     await connect(config.DB_URL);
     ensureAdminExists();
@@ -61,4 +61,3 @@ const startServer = async () => {
     console.error(e);
   }
 };
-startServer();
