@@ -1,11 +1,14 @@
 import mongoose from 'mongoose';
+import config from './src/config';
 import { connect } from './src/utils/db';
 import { Admin } from './src/resources/admin/admin.model';
 import { Guest } from './src/resources/guest/guest.model';
 
 const models = { Admin, Guest };
 
-const url = process.env.TEST_DB_URL;
+const dbUser = encodeURIComponent(config.DB_USER);
+const dbPwd = encodeURIComponent(config.DB_PWD);
+const dbUrl = `mongodb://${dbUser}:${dbPwd}@${config.DB_HOST}:${config.DB_PORT}/${config.TEST_DB_NAME}?authSource=admin`;
 
 const remove = collection => {
   return new Promise((resolve, reject) => {
@@ -25,7 +28,7 @@ const clearDB = () => {
 beforeEach(async () => {
   if (mongoose.connection.readyState == 0) {
     try {
-      await connect(url);
+      await connect(dbUrl);
       await Promise.all(Object.keys(models).map(name => models[name].init())); // Build model indices
     } catch (e) {
       console.log('connection error');
@@ -39,7 +42,6 @@ beforeEach(async () => {
 });
 afterEach(async () => {
   await mongoose.connections[0].db.dropDatabase();
-  // await mongoose.disconnect();
 });
 afterAll(async () => {
   await Promise.all(

@@ -11,10 +11,10 @@ const mongoOpts = {
   useFindAndModify: false
 };
 
-const mongoConn = mongoose.createConnection(
-  config.RATE_LIMITER_DB_URL,
-  mongoOpts
-);
+const dbUser = encodeURIComponent(config.DB_USER);
+const dbPwd = encodeURIComponent(config.DB_PWD);
+const dbUrl = `mongodb://${dbUser}:${dbPwd}@${config.DB_HOST}:${config.DB_PORT}/${config.RL_DB_NAME}?authSource=admin`;
+const mongoConn = mongoose.createConnection(dbUrl, mongoOpts);
 
 const maxWrongAttemptsByIPperDay = 100;
 const maxConsecutiveFailsByUsernameAndIP = 10;

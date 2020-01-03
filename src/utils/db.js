@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
-import options from '../config';
+import config from '../config';
 
-export const connect = (url = options.DB_URL, opts = {}) => {
+const dbUser = encodeURIComponent(config.DB_USER);
+const dbPwd = encodeURIComponent(config.DB_PWD);
+const dbUrl = `mongodb://${dbUser}:${dbPwd}@${config.DB_HOST}:${config.DB_PORT}/${config.DB_NAME}?authSource=admin`;
+
+export const connect = (url = dbUrl, opts = {}) => {
   return mongoose.connect(url, {
     ...opts,
     useUnifiedTopology: true,

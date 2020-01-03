@@ -52,7 +52,7 @@ app.all('*', (req, res) => res.status(404).json({ message: 'Not found' }));
 
 export const startServer = async () => {
   try {
-    await connect(config.DB_URL);
+    await connect();
     ensureAdminExists();
     app.listen(config.PORT, () =>
       console.log(`API listening on http://localhost:${config.PORT}/`)
