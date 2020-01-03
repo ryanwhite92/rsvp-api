@@ -33,13 +33,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // operators (`$` or `.`) to attempt preventing malicious input
 app.use(mongoSanitize());
 
-if (config.ENV == 'development') {
+if (config.ENV != 'production') {
   app.use(morgan('dev'));
 } else {
   // Create a (daily) rotating write stream
   const accessLogStream = rfs.createStream('access.log', {
     interval: '1d',
-    path: path.join(__dirname, 'log')
+    path: path.join(__dirname, '../log')
   });
   app.use(morgan('combined', { stream: accessLogStream }));
 }
