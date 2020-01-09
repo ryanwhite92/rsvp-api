@@ -1,14 +1,14 @@
 import rateLimiter from '../utils/rateLimiter';
 import { Admin } from '../resources/admin/admin.model';
 
-// Middleware to protect routes that require an authenticated user
-export const protect = async (req, res, next) => {
+// Ensure only authenticated users have access to resources
+export const authenticate = async (req, res, next) => {
   if (!req.session.user) {
     return res
       .status(401)
       .json({ message: 'Must be signed in to access this resource' });
   }
-  console.log(req.session);
+
   next();
 };
 

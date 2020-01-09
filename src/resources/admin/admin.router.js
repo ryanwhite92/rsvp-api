@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import controllers from './admin.controller';
-import { protect, checkPermissions } from '../../utils/auth';
+import { authenticate, checkPermissions } from '../../utils/auth';
 
 const router = Router();
 
 router.post('/signin', controllers.signin);
 
-router.use(protect);
+router.use(authenticate);
 
 router.post('/signup', checkPermissions(['admin']), controllers.signup);
 
