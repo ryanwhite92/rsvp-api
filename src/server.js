@@ -1,9 +1,7 @@
 'use strict';
 
 import express from 'express';
-import session from 'express-session';
-import connectMongo from 'connect-mongo';
-import mongoose from 'mongoose';
+import { appSession } from './utils/session';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -28,37 +26,8 @@ if (config.ENV == 'production') {
   );
 }
 
-const MongoStore = connectMongo(session);
-const mongoOpts = {
-  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
-  reconnectInterval: 100, // Reconnect every 100ms
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false
-};
-const dbUser = encodeURIComponent(config.DB_USER);
-const dbPwd = encodeURIComponent(config.DB_PWD);
-const dbUrl = `mongodb://${dbUser}:${dbPwd}@${config.DB_HOST}:${config.DB_PORT}/${config.SESSION_DB_NAME}?authSource=admin`;
-const connection = mongoose.createConnection(dbUrl, mongoOpts);
-const appSession = {
-  secret: config.SESSION_SECRET,
-  name: 'sessionId',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    maxAge: 600000
-  },
-  store: new MongoStore({
-    mongooseConnection: connection
-  })
-};
-if (config.ENV == 'production') {
-  app.set('trust proxy', 1); // trust first proxy
-  appSession.cookie.secure = true;
-}
-app.use(session(appSession));
+// Setup express session middleware
+appSession(app);
 
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());
@@ -90,7 +59,7 @@ export const startServer = async () => {
     await connect();
     ensureAdminExists();
     app.listen(config.PORT, () =>
-      console.log(`API listening on http://localhost:${config.PORT}/`)
+      console.log(`API listening on ${config.PORT}`)
     );
   } catch (e) {
     console.error(e);
