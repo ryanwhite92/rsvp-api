@@ -1,64 +1,20 @@
-import config from '../config';
-import jwt from 'jsonwebtoken';
 import rateLimiter from '../utils/rateLimiter';
-import { Guest } from '../resources/guest/guest.model';
 import { Admin } from '../resources/admin/admin.model';
 
-export const newToken = user => {
-  return jwt.sign(user, config.JWT_SECRET, {
-    expiresIn: config.JWT_EXPIRY
-  });
-};
-
-export const verifyToken = token => {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, config.JWT_SECRET, (err, payload) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(payload);
-    });
-  });
-};
-
+// Middleware to protect routes that require an authenticated user
 export const protect = async (req, res, next) => {
-  const invalidMessage = 'Missing or invalid token';
-  const bearer = req.headers.authorization;
-  if (!bearer || !bearer.startsWith('Bearer ')) {
-    return res.status(401).json({ message: invalidMessage });
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .json({ message: 'Must be signed in to access this resource' });
   }
-
-  const token = bearer.split('Bearer ')[1];
-  try {
-    const payload = await verifyToken(token);
-    let user = await Guest.findById(payload._id)
-      .select('-password')
-      .lean()
-      .exec();
-
-    if (!user) {
-      user = await Admin.findById(payload._id)
-        .select('-password')
-        .lean()
-        .exec();
-    }
-
-    if (!user) {
-      return res.status(401).json({ message: invalidMessage });
-    }
-
-    req.user = user;
-  } catch (e) {
-    console.error(e);
-    return res.status(401).json({ message: invalidMessage });
-  }
-
+  console.log(req.session);
   next();
 };
 
 // Check that user has sufficient permissions to access and modify resources
 export const checkPermissions = allowedRoles => (req, res, next) => {
-  const { role } = req.user;
+  const { role } = req.session.user;
   if (!allowedRoles.includes(role)) {
     return res
       .status(403)
@@ -117,11 +73,7 @@ export const signin = model => async (req, res) => {
     res.status(429).json({ message: 'Too many requests' });
   } else {
     try {
-      const selectFields = Object.keys(query).join(' ');
-      const user = await model
-        .findOne(query)
-        .select(`${selectFields} password`)
-        .exec();
+      const user = await model.findOne(query).exec();
 
       const passwordMatch = user ? await user.checkPassword(password) : false;
       if (!user || !passwordMatch) {
@@ -154,8 +106,8 @@ export const signin = model => async (req, res) => {
         await rateLimiter.consecutiveFailsByUsernameAndIP.delete(usernameIPkey);
       }
 
-      const token = newToken(user.toJSON());
-      return res.status(201).json({ token });
+      req.session.user = user;
+      return res.status(201).json({ message: 'Signin successful' });
     } catch (e) {
       console.error(e);
       return res.status(500).end();
@@ -177,8 +129,8 @@ export const signup = async (req, res) => {
       return res.status(400).end();
     }
 
-    const token = newToken(admin.toJSON());
-    return res.status(201).json({ token });
+    req.session.user = admin;
+    return res.status(201).json({ message: 'Signup successful' });
   } catch (e) {
     console.error(e);
     return res.status(500).end();
