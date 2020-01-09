@@ -1,6 +1,7 @@
 'use strict';
 
 import express from 'express';
+import session from 'express-session';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -24,6 +25,16 @@ if (config.ENV == 'production') {
     })
   );
 }
+
+const appSession = {
+  secret: config.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 600000
+  }
+};
+app.use(session(appSession));
 
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());
