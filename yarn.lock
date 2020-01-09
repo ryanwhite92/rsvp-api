@@ -1572,6 +1572,13 @@ configstore@^3.0.0:
     write-file-atomic "^2.0.0"
     xdg-basedir "^3.0.0"
 
+connect-mongo@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/connect-mongo/-/connect-mongo-3.2.0.tgz#20f776c7f2a9d8144fc76cfdcbf33edb05eb4d52"
+  integrity sha512-0Mx88079Z20CG909wCFlR3UxhMYGg6Ibn1hkIje1hwsqOLWtL9HJV+XD0DAjUvQScK6WqY/FA8tSVQM9rR64Rw==
+  dependencies:
+    mongodb "^3.1.0"
+
 console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
@@ -4041,6 +4048,17 @@ mongodb@3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.3.4.tgz#f52eec4a04005101e63715d4d1f67bf784fa0aef"
   integrity sha512-6fmHu3FJTpeZxacJcfjUGIP3BSteG0l2cxLkSrf1nnnS1OrlnVGiP9P/wAC4aB6dM6H4vQ2io8YDjkuPkje7AA==
+  dependencies:
+    bson "^1.1.1"
+    require_optional "^1.0.1"
+    safe-buffer "^5.1.2"
+  optionalDependencies:
+    saslprep "^1.0.0"
+
+mongodb@^3.1.0:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.4.1.tgz#0d15e57e0ea0fc85b7a4fb9291b374c2e71652dc"
+  integrity sha512-juqt5/Z42J4DcE7tG7UdVaTKmUC6zinF4yioPfpeOSNBieWSK6qCY+0tfGQcHLKrauWPDdMZVROHJOa8q2pWsA==
   dependencies:
     bson "^1.1.1"
     require_optional "^1.0.1"

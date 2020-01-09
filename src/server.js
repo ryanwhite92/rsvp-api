@@ -2,6 +2,8 @@
 
 import express from 'express';
 import session from 'express-session';
+import connectMongo from 'connect-mongo';
+import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -26,6 +28,19 @@ if (config.ENV == 'production') {
   );
 }
 
+const MongoStore = connectMongo(session);
+const mongoOpts = {
+  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+  reconnectInterval: 100, // Reconnect every 100ms
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false
+};
+const dbUser = encodeURIComponent(config.DB_USER);
+const dbPwd = encodeURIComponent(config.DB_PWD);
+const dbUrl = `mongodb://${dbUser}:${dbPwd}@${config.DB_HOST}:${config.DB_PORT}/${config.SESSION_DB_NAME}?authSource=admin`;
+const connection = mongoose.createConnection(dbUrl, mongoOpts);
 const appSession = {
   secret: config.SESSION_SECRET,
   name: 'sessionId',
@@ -34,7 +49,10 @@ const appSession = {
   cookie: {
     httpOnly: true,
     maxAge: 600000
-  }
+  },
+  store: new MongoStore({
+    mongooseConnection: connection
+  })
 };
 if (config.ENV == 'production') {
   app.set('trust proxy', 1); // trust first proxy
