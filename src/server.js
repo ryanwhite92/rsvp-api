@@ -28,12 +28,18 @@ if (config.ENV == 'production') {
 
 const appSession = {
   secret: config.SESSION_SECRET,
+  name: 'sessionId',
   resave: false,
   saveUninitialized: false,
   cookie: {
+    httpOnly: true,
     maxAge: 600000
   }
 };
+if (config.ENV == 'production') {
+  app.set('trust proxy', 1); // trust first proxy
+  appSession.cookie.secure = true;
+}
 app.use(session(appSession));
 
 // parses application/json and application/x-www-form-urlencoded
