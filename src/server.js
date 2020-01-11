@@ -61,6 +61,14 @@ if (config.ENV != 'production') {
 app.use('/guest', GuestRouter);
 app.use('/admin', AdminRouter);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  // Go to next middleware if error is not a CSRF token error
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+  // Handle CSRF token errors
+  return res.status(403).json({ message: 'Invalid token' });
+});
+
 // Send 404 if route doesn't exist
 app.all('*', (req, res) => res.status(404).json({ message: 'Not found' }));
 
