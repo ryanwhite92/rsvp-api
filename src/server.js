@@ -5,6 +5,7 @@ import { appSession } from './utils/session';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
+import csurf from 'csurf';
 import helmet from 'helmet';
 import path from 'path';
 import * as rfs from 'rotating-file-stream';
@@ -28,6 +29,15 @@ if (config.ENV == 'production') {
 
 // Setup express session middleware
 appSession(app);
+
+// Setup CSRF protection
+app.use(csurf());
+app.get('/auth-token', (req, res) => {
+  const token = req.csrfToken();
+  console.log('GET TOKEN =>', token);
+  res.cookie('XSRF-TOKEN', token);
+  return res.status(200).send();
+});
 
 // parses application/json and application/x-www-form-urlencoded
 app.use(bodyParser.json());

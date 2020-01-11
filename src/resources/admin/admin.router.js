@@ -8,7 +8,7 @@ router.post('/signin', controllers.signin);
 
 router.use(authenticate);
 
-router.post('/signup', checkPermissions(['admin']), controllers.signup);
+// router.post('/signup', checkPermissions(['admin']), controllers.signup);
 
 router
   .route('/')

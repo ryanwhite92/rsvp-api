@@ -2,7 +2,7 @@ import rateLimiter from '../utils/rateLimiter';
 import { Admin } from '../resources/admin/admin.model';
 
 // Ensure only authenticated users have access to resources
-export const authenticate = async (req, res, next) => {
+export const authenticate = (req, res, next) => {
   if (!req.session.user) {
     return res
       .status(401)
@@ -107,6 +107,9 @@ export const signin = model => async (req, res) => {
       }
 
       req.session.user = user;
+      const token = req.csrfToken();
+      console.log('POST TOKEN =>', token);
+      res.cookie('XSRF-TOKEN', token);
       return res.status(201).json({ message: 'Signin successful' });
     } catch (e) {
       console.error(e);
