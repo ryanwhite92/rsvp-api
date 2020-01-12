@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import uid from 'uid-safe';
 import config from '../../config';
 
 var guestSchema = new mongoose.Schema(
@@ -40,6 +41,7 @@ var guestSchema = new mongoose.Schema(
       email: String
     },
     password: String,
+    userId: String,
     role: {
       type: String,
       default: 'guest',
@@ -61,6 +63,15 @@ guestSchema.pre('save', function(next) {
     this.password = hash;
     next();
   });
+});
+
+guestSchema.pre('save', async function(next) {
+  try {
+    this.userId = await uid(6);
+    next();
+  } catch (e) {
+    next(e);
+  }
 });
 
 guestSchema.methods.checkPassword = function(password) {

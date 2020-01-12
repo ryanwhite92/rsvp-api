@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import uid from 'uid-safe';
 
 const adminSchema = new mongoose.Schema(
   {
@@ -13,6 +14,7 @@ const adminSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    userId: String,
     role: {
       type: String,
       default: 'admin',
@@ -34,6 +36,15 @@ adminSchema.pre('save', function(next) {
     this.password = hash;
     next();
   });
+});
+
+adminSchema.pre('save', async function(next) {
+  try {
+    this.userId = await uid(6);
+    next();
+  } catch (e) {
+    next(e);
+  }
 });
 
 adminSchema.methods.checkPassword = function(password) {
