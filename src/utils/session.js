@@ -21,7 +21,8 @@ const connection = mongoose.createConnection(dbUrl, mongoOpts);
 const sessionOpts = {
   secret: config.SESSION_SECRET,
   name: 'sessionId',
-  resave: false,
+  resave: true,
+  rolling: true,
   saveUninitialized: false,
   cookie: {
     secure: config.ENV == 'production' ? true : false,
