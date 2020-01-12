@@ -32,10 +32,10 @@ appSession(app);
 
 // Setup CSRF protection
 app.use(csurf());
+
+// Get CSRF token for signin routes
 app.get('/auth-token', (req, res) => {
-  const token = req.csrfToken();
-  console.log('GET TOKEN =>', token);
-  res.cookie('XSRF-TOKEN', token);
+  res.cookie('XSRF-TOKEN', req.csrfToken());
   return res.status(200).send();
 });
 

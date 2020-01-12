@@ -19,9 +19,9 @@ router
   .route('/:id')
   .get(checkPermissions(['admin', 'guest']), controllers.getOne)
   .put(checkPermissions(['admin', 'guest']), (req, res) => {
-    if (req.user.role == 'guest') {
+    if (req.session.user.role == 'guest') {
       controllers.updateRsvp(req, res);
-    } else if (req.user.role == 'admin') {
+    } else if (req.session.user.role == 'admin') {
       controllers.updateOne(req, res);
     }
   })

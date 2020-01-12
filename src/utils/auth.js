@@ -107,9 +107,7 @@ export const signin = model => async (req, res) => {
       }
 
       req.session.user = user;
-      const token = req.csrfToken();
-      console.log('POST TOKEN =>', token);
-      res.cookie('XSRF-TOKEN', token);
+      res.cookie('XSRF-TOKEN', req.csrfToken());
       return res.status(201).json({ message: 'Signin successful' });
     } catch (e) {
       console.error(e);
