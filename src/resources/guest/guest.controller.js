@@ -15,6 +15,8 @@ const updateRsvp = async (req, res) => {
       return res.status(404).end();
     }
 
+    const updatedRsvpStatus =
+      typeof rsvpStatus == 'boolean' ? rsvpStatus : guest.rsvpStatus;
     // Update rsvpStatus for existing plusOnes
     const updatedPlusOnes = guest.plusOnes.map(guestPlusOne => {
       plusOnes.forEach(plusOne => {
@@ -31,7 +33,7 @@ const updateRsvp = async (req, res) => {
     const updatedGuest = await Guest.findByIdAndUpdate(
       id,
       {
-        rsvpStatus: rsvpStatus ? rsvpStatus : guest.rsvpStatus,
+        rsvpStatus: updatedRsvpStatus,
         plusOnes: updatedPlusOnes
       },
       { new: true }
