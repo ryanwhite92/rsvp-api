@@ -3,7 +3,7 @@ export const getOne = model => async (req, res) => {
 
   try {
     const doc = await model
-      .findById(id)
+      .findOne({ userId: id })
       .lean()
       .exec();
 
@@ -56,7 +56,7 @@ export const updateOne = model => async (req, res) => {
 
   try {
     const updatedDoc = await model
-      .findByIdAndUpdate(id, { ...req.body }, { new: true })
+      .findOneAndUpdate({ userId: id }, { ...req.body }, { new: true })
       .lean()
       .exec();
 
@@ -76,7 +76,7 @@ export const removeOne = model => async (req, res) => {
 
   try {
     const removedDoc = await model
-      .findByIdAndDelete(id)
+      .findOneAndDelete({ userId: id })
       .lean()
       .exec();
 
