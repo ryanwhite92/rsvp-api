@@ -62,6 +62,11 @@ describe('guest model', () => {
       expect(password).toBe(String);
     });
 
+    test('userId', () => {
+      const userId = Guest.schema.obj.userId;
+      expect(userId).toBe(String);
+    });
+
     test('role', () => {
       const role = Guest.schema.obj.role;
       expect(role).toEqual({

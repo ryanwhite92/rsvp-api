@@ -20,6 +20,11 @@ describe('admin model', () => {
       });
     });
 
+    test('userId', () => {
+      const userId = Admin.schema.obj.userId;
+      expect(userId).toBe(String);
+    });
+
     test('role', () => {
       const role = Admin.schema.obj.role;
       expect(role).toEqual({

@@ -5,8 +5,8 @@ describe('admin router', () => {
     const routes = [
       { path: '/', method: 'get' },
       { path: '/:id', method: 'get' },
-      { path: '/signin', method: 'post' },
-      { path: '/signup', method: 'post' }
+      { path: '/signin', method: 'post' }
+      // { path: '/signup', method: 'post' }
     ];
 
     routes.forEach(route => {
