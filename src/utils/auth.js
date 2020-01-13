@@ -1,12 +1,34 @@
 import rateLimiter from '../utils/rateLimiter';
 import { Admin } from '../resources/admin/admin.model';
+import { Guest } from '../resources/guest/guest.model';
 
-// Ensure only authenticated users have access to resources
-export const authenticate = (req, res, next) => {
+// Ensure only existing, authenticated users have access to resources
+export const authenticate = async (req, res, next) => {
+  const invalidMessage = 'Must be signed in to access this resource';
   if (!req.session.user) {
-    return res
-      .status(401)
-      .json({ message: 'Must be signed in to access this resource' });
+    return res.status(401).json({ message: invalidMessage });
+  }
+
+  const { userId } = req.session.user;
+  try {
+    let user = await Guest.findOne({ userId })
+      .select('-password')
+      .lean()
+      .exec();
+
+    if (!user) {
+      user = await Admin.findOne({ userId })
+        .select('-password')
+        .lean()
+        .exec();
+    }
+
+    if (!user) {
+      return res.status(401).json({ message: invalidMessage });
+    }
+  } catch (e) {
+    console.error(e);
+    return res.status(401).json({ message: invalidMessage });
   }
 
   next();
@@ -31,8 +53,8 @@ export const signin = model => async (req, res) => {
 
   if (model.modelName == 'guest') {
     invalidMessage = 'Invalid id and password';
-    query._id = req.params.id;
-    if (!query._id || !password) {
+    query.userId = req.params.id;
+    if (!query.userId || !password) {
       return res.status(400).json({ message: 'Id and password required' });
     }
   }
@@ -46,7 +68,7 @@ export const signin = model => async (req, res) => {
   }
 
   const ipAddr = req.ip;
-  const username = model.modelName == 'admin' ? query.email : query._id;
+  const username = model.modelName == 'admin' ? query.email : query.userId;
   const usernameIPkey = rateLimiter.getUsernameIPkey(username, ipAddr);
   const [resUsernameAndIP, resSlowByIP] = await Promise.all([
     rateLimiter.consecutiveFailsByUsernameAndIP.get(usernameIPkey),
@@ -107,7 +129,6 @@ export const signin = model => async (req, res) => {
       }
 
       req.session.user = user;
-      res.cookie('XSRF-TOKEN', req.csrfToken());
       return res.status(201).json({ message: 'Signin successful' });
     } catch (e) {
       console.error(e);
