@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 describe('crud controllers', () => {
   describe('getOne', () => {
-    test('finds by id', async () => {
+    test('finds by userId', async () => {
       expect.assertions(2);
 
       const mockGuest = await Guest.create({
@@ -15,7 +15,7 @@ describe('crud controllers', () => {
 
       const req = {
         params: {
-          id: mockGuest._id
+          id: mockGuest.userId
         }
       };
 
@@ -25,7 +25,7 @@ describe('crud controllers', () => {
           return this;
         },
         json(result) {
-          expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
+          expect(`${result.data.userId}`).toBe(`${mockGuest.userId}`);
         }
       };
 
@@ -154,7 +154,7 @@ describe('crud controllers', () => {
 
       const req = {
         params: {
-          id: mockGuest._id
+          id: mockGuest.userId
         },
         body: update
       };
@@ -165,7 +165,7 @@ describe('crud controllers', () => {
           return this;
         },
         json(result) {
-          expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
+          expect(`${result.data.userId}`).toBe(`${mockGuest.userId}`);
           expect(result.data.firstName).toBe(update.firstName);
           expect(result.data.lastName).toBe(update.lastName);
           expect(result.data.contact.method).toBe(update.contact.method);
@@ -209,7 +209,7 @@ describe('crud controllers', () => {
       });
 
       const req = {
-        params: { id: mockGuest._id }
+        params: { id: mockGuest.userId }
       };
 
       const res = {
@@ -218,7 +218,7 @@ describe('crud controllers', () => {
           return this;
         },
         json(result) {
-          expect(`${result.data._id}`).toBe(`${mockGuest._id}`);
+          expect(`${result.data.userId}`).toBe(`${mockGuest.userId}`);
         }
       };
 
