@@ -7,7 +7,7 @@ const updateRsvp = async (req, res) => {
   const { rsvpStatus, plusOnes = [] } = req.body;
 
   try {
-    const guest = await Guest.findById(id)
+    const guest = await Guest.findOne({ userId: id })
       .lean()
       .exec();
 
@@ -30,8 +30,8 @@ const updateRsvp = async (req, res) => {
       return guestPlusOne;
     });
 
-    const updatedGuest = await Guest.findByIdAndUpdate(
-      id,
+    const updatedGuest = await Guest.findOneAndUpdate(
+      { userId: id },
       {
         rsvpStatus: updatedRsvpStatus,
         plusOnes: updatedPlusOnes
