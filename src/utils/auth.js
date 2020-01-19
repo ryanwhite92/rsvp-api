@@ -129,7 +129,7 @@ export const signin = model => async (req, res) => {
       }
 
       req.session.user = user;
-      return res.status(201).json({ message: 'Signin successful' });
+      return res.status(200).json({ userRole: user.role });
     } catch (e) {
       console.error(e);
       return res.status(500).end();
