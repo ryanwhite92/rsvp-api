@@ -67,6 +67,9 @@ guestSchema.pre('save', function(next) {
 
 guestSchema.pre('save', async function(next) {
   try {
+    // store first/last names as lowercase for uniqueness check
+    this.firstName = this.firstName.toLowerCase();
+    this.lastName = this.lastName.toLowerCase();
     this.userId = await uid(6);
     next();
   } catch (e) {
