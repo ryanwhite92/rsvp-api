@@ -59,7 +59,7 @@ describe('guest model', () => {
 
     test('password', () => {
       const password = Guest.schema.obj.password;
-      expect(password).toBe(String);
+      expect(password).toEqual({ type: String, select: false });
     });
 
     test('userId', () => {

@@ -16,7 +16,8 @@ describe('admin model', () => {
       const password = Admin.schema.obj.password;
       expect(password).toEqual({
         type: String,
-        required: true
+        required: true,
+        select: false
       });
     });
 

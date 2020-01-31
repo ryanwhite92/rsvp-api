@@ -181,11 +181,11 @@ describe('authentication:', () => {
         };
         const res = {
           status(status) {
-            expect(status).toBe(201);
+            expect(status).toBe(200);
             return this;
           },
           async json(result) {
-            expect(result.message).toBe('Signin successful');
+            expect(result.userRole).toBe('guest');
           }
         };
 
@@ -263,11 +263,11 @@ describe('authentication:', () => {
         };
         const res = {
           status(status) {
-            expect(status).toBe(201);
+            expect(status).toBe(200);
             return this;
           },
           async json(result) {
-            expect(result.message).toBe('Signin successful');
+            expect(result.userRole).toBe('admin');
           }
         };
 

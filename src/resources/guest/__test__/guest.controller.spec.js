@@ -38,7 +38,7 @@ describe('guest controllers', () => {
       });
 
       const req = {
-        params: { id: mockGuest._id },
+        params: { id: mockGuest.userId },
         body: { rsvpStatus: true }
       };
 
@@ -67,7 +67,7 @@ describe('guest controllers', () => {
       });
 
       const req = {
-        params: { id: mockGuest._id },
+        params: { id: mockGuest.userId },
         body: {
           rsvpStatus: true,
           plusOnes: [
@@ -111,7 +111,7 @@ describe('guest controllers', () => {
 
       const req = {
         params: {
-          id: mockGuest._id
+          id: mockGuest.userId
         },
         body: {
           rsvpStatus: true,
