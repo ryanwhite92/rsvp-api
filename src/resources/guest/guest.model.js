@@ -40,7 +40,7 @@ var guestSchema = new mongoose.Schema(
       phone: String,
       email: String
     },
-    password: String,
+    password: { type: String, select: false },
     userId: String,
     role: {
       type: String,
