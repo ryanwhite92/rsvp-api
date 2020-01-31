@@ -25,6 +25,16 @@ if (config.ENV == 'production') {
       origin: config.CORS_ALLOWED_ORIGIN
     })
   );
+
+  // Create a (daily) rotating write stream
+  const accessLogStream = rfs.createStream('access.log', {
+    interval: '1d',
+    path: path.join(__dirname, '../log')
+  });
+  app.use(morgan('combined', { stream: accessLogStream }));
+} else {
+  app.use(cors({ origin: 'http://localhost:1234', credentials: true }));
+  app.use(morgan('dev'));
 }
 
 // Setup express session middleware
@@ -47,21 +57,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // operators (`$` or `.`) to attempt preventing malicious input
 app.use(mongoSanitize());
 
-if (config.ENV != 'production') {
-  app.use(morgan('dev'));
-} else {
-  // Create a (daily) rotating write stream
-  const accessLogStream = rfs.createStream('access.log', {
-    interval: '1d',
-    path: path.join(__dirname, '../log')
-  });
-  app.use(morgan('combined', { stream: accessLogStream }));
-}
-
 app.use('/guest', GuestRouter);
 app.use('/admin', AdminRouter);
 
-// Error handling middleware
+// CSRF Error handling middleware
 app.use((err, req, res, next) => {
   // Go to next middleware if error is not a CSRF token error
   if (err.code !== 'EBADCSRFTOKEN') return next(err);
