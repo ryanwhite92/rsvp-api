@@ -60,7 +60,10 @@ export const createOne = model => async (req, res) => {
       return res.status(400).end();
     }
 
-    return res.status(201).json({ data: doc });
+    const returnDoc = doc.toObject();
+    delete returnDoc.password;
+
+    return res.status(201).json({ data: returnDoc });
   } catch (e) {
     console.error(e);
     return res.status(500).end();
@@ -72,7 +75,11 @@ export const updateOne = model => async (req, res) => {
 
   try {
     const updatedDoc = await model
-      .findOneAndUpdate({ userId: id }, { ...req.body }, { new: true })
+      .findOneAndUpdate(
+        { userId: id },
+        { ...req.body },
+        { new: true, fields: '-password' }
+      )
       .lean()
       .exec();
 
@@ -93,6 +100,7 @@ export const removeOne = model => async (req, res) => {
   try {
     const removedDoc = await model
       .findOneAndDelete({ userId: id })
+      .select('-password')
       .lean()
       .exec();
 
