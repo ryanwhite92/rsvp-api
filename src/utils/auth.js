@@ -95,7 +95,11 @@ export const signin = model => async (req, res) => {
     res.status(429).json({ message: 'Too many requests' });
   } else {
     try {
-      const user = await model.findOne(query).exec();
+      // checkPassword method requires the user document to have a password hash
+      const user = await model
+        .findOne(query)
+        .select('+password')
+        .exec();
 
       const passwordMatch = user ? await user.checkPassword(password) : false;
       if (!user || !passwordMatch) {
