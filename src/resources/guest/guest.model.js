@@ -65,11 +65,17 @@ guestSchema.pre('save', function(next) {
   });
 });
 
+const normalizeName = name => {
+  return name
+    .toLowerCase()
+    .replace(/(?:^|\s|\-)\S/g, char => char.toUpperCase());
+};
+
 guestSchema.pre('save', async function(next) {
   try {
     // store first/last names as lowercase for uniqueness check
-    this.firstName = this.firstName.toLowerCase();
-    this.lastName = this.lastName.toLowerCase();
+    this.firstName = normalizeName(this.firstName);
+    this.lastName = normalizeName(this.lastName);
     this.userId = await uid(6);
     next();
   } catch (e) {
