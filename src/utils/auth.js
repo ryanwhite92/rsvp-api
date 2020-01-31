@@ -52,10 +52,10 @@ export const signin = model => async (req, res) => {
   const query = {};
 
   if (model.modelName == 'guest') {
-    invalidMessage = 'Invalid id and password';
+    invalidMessage = 'Invalid password';
     query.userId = req.params.id;
     if (!query.userId || !password) {
-      return res.status(400).json({ message: 'Id and password required' });
+      return res.status(400).json({ message: 'Password required' });
     }
   }
 
@@ -152,7 +152,7 @@ export const signup = async (req, res) => {
     }
 
     req.session.user = admin;
-    return res.status(201).json({ message: 'Signup successful' });
+    return res.status(200).json({ message: 'Signup successful' });
   } catch (e) {
     console.error(e);
     return res.status(500).end();
