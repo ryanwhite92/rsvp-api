@@ -1,22 +1,9 @@
-const getModelSelectFields = model => {
-  let selectFields;
-  if (model.modelName == 'guest') {
-    selectFields = 'firstName lastName rsvpStatus plusOnes role userId';
-  }
-  if (model.modelName == 'admin') {
-    selectFields = 'email role userId';
-  }
-  return selectFields;
-};
-
 export const getOne = model => async (req, res) => {
   const { id } = req.params;
-  const selectFields = getModelSelectFields(model);
 
   try {
     const doc = await model
       .findOne({ userId: id })
-      .select(selectFields)
       .lean()
       .exec();
 
@@ -32,12 +19,9 @@ export const getOne = model => async (req, res) => {
 };
 
 export const getMany = model => async (req, res) => {
-  const selectFields = getModelSelectFields(model);
-
   try {
     const docs = await model
       .find({})
-      .select(selectFields)
       .lean()
       .exec();
 
