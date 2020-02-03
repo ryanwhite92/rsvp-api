@@ -45,8 +45,7 @@ app.use(csurf());
 
 // Get CSRF token for signin routes
 app.get('/auth-token', (req, res) => {
-  res.cookie('XSRF-TOKEN', req.csrfToken());
-  return res.status(200).send();
+  return res.status(200).json({ token: req.csrfToken() });
 });
 
 // parses application/json and application/x-www-form-urlencoded
